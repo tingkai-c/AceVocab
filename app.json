@@ -64,7 +64,15 @@
           "iosUrlScheme": "com.googleusercontent.apps.297363518648-p4uvjst5td2qvu7gfmm54netj1cag9bp.apps.googleusercontent.com"
         }
       ],
-      "expo-font"
+      "expo-font",
+      ["expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.24"
+          }
+        }
+      ]
+
     ],
     "experiments": {
       "typedRoutes": true
