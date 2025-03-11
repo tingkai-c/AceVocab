@@ -21,10 +21,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Set up Kotlin
-        uses: fwilhe2/setup-kotlin@main
-        with:
-          version: 1.9.24
+      # - name: Set up Kotlin
+      #   uses: fwilhe2/setup-kotlin@main
+      #   with:
+      #     version: 1.9.24
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -42,8 +42,8 @@ jobs:
           cmd: install
       - name: Expo prebuild
         run: expo prebuild --platform android
-      - name: Prebuild script
-        run: bash scripts/update-kotlin.sh
+      # - name: Prebuild script
+      #   run: bash scripts/update-kotlin.sh
 
       - name: Build Android app
         run: eas build --platform android --profile preview --local --output ${{ github.workspace }}/app-release.apk
