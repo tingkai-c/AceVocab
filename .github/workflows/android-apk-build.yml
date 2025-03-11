@@ -40,6 +40,8 @@ jobs:
         uses: Borales/actions-yarn@v5.0.0
         with:
           cmd: install
+      - name: Expo prebuild
+        run: expo prebuild --platform android
 
       - name: Build Android app
         run: eas build --platform android --profile preview --local --output ${{ github.workspace }}/app-release.apk
