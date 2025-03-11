@@ -12,7 +12,6 @@ const Content = () => {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [correctAnswer, setCorrectAnswer] = useState<string>('');
-  var db = null;
 
   useEffect(() => {
     generateQuestion();
@@ -24,7 +23,7 @@ const Content = () => {
 
     try {
       // const 
-      const words = await WordScheduler.getNextwords();
+      const words = await
       // Randomly select a word from the list
       const correctWord = words[0];
       const wrongWords = words.slice(1, 4);
@@ -50,36 +49,36 @@ const Content = () => {
 
 
 
-  const handleAnswer = (selectedOption : string) => {
+  const handleAnswer = (selectedOption: string) => {
     if (selectedOption === correctAnswer) {
       Alert.alert('Correct!', 'You selected the right answer.');
       SupabaseService.updateUserWord(correctAnswer, AnswerType.Correct);
       //update other words
-      
+
     } else {
       Alert.alert('Incorrect', `The correct answer was ${correctAnswer}.`);
       SupabaseService.updateUserWord(correctAnswer, AnswerType.Wrong);
-      
+
     }
     generateQuestion();
   };
 
   return (
-    
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          <>
-            <ThemedText style={{ fontSize: 18, marginBottom: 20 }}>{question}</ThemedText>
-            <ThemedText style={{ fontSize: 16, marginBottom: 20 }}>Select the correct answer:</ThemedText>
-            {options.map((option, index) => (
-              <Button key={index} title={option} onPress={() => handleAnswer(option)} />
-            ))}
-          </>
-        )}
-      </View>
-    
+
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <ThemedText style={{ fontSize: 18, marginBottom: 20 }}>{question}</ThemedText>
+          <ThemedText style={{ fontSize: 16, marginBottom: 20 }}>Select the correct answer:</ThemedText>
+          {options.map((option, index) => (
+            <Button key={index} title={option} onPress={() => handleAnswer(option)} />
+          ))}
+        </>
+      )}
+    </View>
+
   );
 }
 

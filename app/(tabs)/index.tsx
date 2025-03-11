@@ -27,8 +27,6 @@ export default function HomeScreen() {
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
-    WordScheduler.init()
-    SupabaseService.fetchUserWords()
     setLoading(false)
   }, [])
 
@@ -42,9 +40,9 @@ export default function HomeScreen() {
       //Make it in the center
       <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ThemedText style={{ fontSize: 18, marginBottom: 20 }}>Welcomesad</ThemedText>
-      
+
         <ThemedText style={{ fontSize: 18, marginBottom: 70 }}>{session ? session.user?.email : 'No user'}</ThemedText>
-      
+
       </ThemedView>
     );
   }

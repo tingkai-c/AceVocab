@@ -7,10 +7,12 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { initFSRS } from '@/services/fsrs/fsrs';
+
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
+  initFSRS()
   return (
     <Tabs
       screenOptions={{
@@ -34,7 +36,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="PracticeView"
+        name="ReviewScreen"
         options={{
           title: 'Practice',
           tabBarIcon: ({ color }) => <IconSymbol size={80} name="paperplane.fill" color={"red"} />,
