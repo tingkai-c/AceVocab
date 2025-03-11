@@ -24,7 +24,7 @@ jobs:
       - name: Set up Kotlin
         uses: fwilhe2/setup-kotlin@main
         with:
-          version: 1.9.25
+          version: 1.9.24
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -40,6 +40,10 @@ jobs:
         uses: Borales/actions-yarn@v5.0.0
         with:
           cmd: install
+      - name: Expo prebuild
+        run: expo prebuild --platform android
+      - name: Prebuild script
+        run: bash scripts/update-kotlin.sh
 
       - name: Build Android app
         run: eas build --platform android --profile preview --local --output ${{ github.workspace }}/app-release.apk
