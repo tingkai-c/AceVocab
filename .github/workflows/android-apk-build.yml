@@ -1,6 +1,6 @@
 name: Android App APK Build
 
-on:
+on: workflow_dispatch
   # Specify when you want the build to run here
 
 jobs:
