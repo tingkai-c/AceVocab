@@ -36,12 +36,12 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: GitHub Action for Yarn
-        uses: Borales/actions-yarn@v5.0.0
-        with:
-          cmd: install
-      - name: Expo prebuild
-        run: expo prebuild --platform android
+      # - name: GitHub Action for Yarn
+      #   uses: Borales/actions-yarn@v5.0.0
+      #   with:
+      #     cmd: install
+      # - name: Expo prebuild
+      #   run: expo prebuild --platform android
       # - name: Prebuild script
       #   run: bash scripts/update-kotlin.sh
 
