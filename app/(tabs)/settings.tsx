@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Auth } from '@/components/Auth';
-import SupabaseService, { supabase } from '@/services/supabase';
+import { Auth } from '@/components/auth/Auth';
+import { supabase } from '@/services/supabase';
 import { useEffect, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 

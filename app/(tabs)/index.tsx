@@ -3,15 +3,14 @@ import { Image, StyleSheet, Platform, View, Button, ActivityIndicator } from 're
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
-import { Auth } from '@/components/Auth.apple';
+import { Auth } from '@/components/auth/Auth.apple';
 import { ThemedView } from '@/components/ThemedView';
-import SupabaseService, { supabase } from '@/services/supabase';
 import { useEffect, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { WordScheduler } from '@/services/WordScheduler';
 import WordCard from '@/components/WordCard';
 import * as WebBrowser from 'expo-web-browser';
-
+import { supabase } from '@/services/supabase';
 
 
 WebBrowser.maybeCompleteAuthSession();

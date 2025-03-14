@@ -1,4 +1,4 @@
-import { Auth } from "@/components/Auth.apple";
+import { Auth } from "@/components/auth/Auth.apple";
 import { ThemedText } from "@/components/ThemedText";
 import WordCard from "@/components/WordCard";
 import SupabaseService from "@/services/supabase";
@@ -17,12 +17,12 @@ export default function WordView() {
   } catch (e) {
     console.warn("Safe area context not available");
   }
-  
+
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [wordIds, setWordIds] = useState<number[]>([]);
   const [error, setError] = useState<string | null>(null);
-  
+
   // New state for dictionary modal
   const [dictionaryModalVisible, setDictionaryModalVisible] = useState(false);
   const [selectedWord, setSelectedWord] = useState<string>("");
@@ -69,7 +69,7 @@ export default function WordView() {
 
   return (
     <View style={[styles.container, { paddingTop: topInset }]}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
@@ -94,9 +94,9 @@ export default function WordView() {
         ) : (
           <View style={styles.cardsContainer}>
             {wordIds.map((wordId) => (
-              <WordCard 
-                key={wordId} 
-                wordId={wordId} 
+              <WordCard
+                key={wordId}
+                wordId={wordId}
                 onPress={(word) => handleOpenDictionary(word)}
               />
             ))}

@@ -12,19 +12,16 @@ import {
 import { StoredCard } from '@/services/fsrs/types';
 import { Grade, Rating } from 'ts-fsrs';
 import { getVocabularyById } from '@/services/local_vocab_db';
-import { supabase } from '@/services/supabase';
-import GPTservice from '@/services/GPTservice'
+import LLMservice from '@/services/LLMservice'
+import { ThemedText } from '@/components/ThemedText';
+
 
 const generateQuestion = async (vocab: string): Promise<{ question: string; choices: string[]; correctAnswer: number }> => {
-  const prompt = `Create a multiple-choice, fill-in-the-blanks question using the word '${vocab}'. Provide 4 answer choices. Return result as json`
 
-  const sentence = await GPTservice.generateFillSentence(prompt)
-  return {
-    question: sentence,
-    choices: [vocab, 'b', 'c', 'd'],
-    correctAnswer: 0,
-  }
-};
+  const question = await LLMservice.generateVocabQuestion(vocab)
+  console.log(question)
+  return question;
+}
 
 export default function ReviewScreen() {
   const [currentCard, setCurrentCard] = useState<StoredCard | null>(null);
@@ -46,6 +43,8 @@ export default function ReviewScreen() {
       await addSelectedPresetId("0ea81186-374c-4a4d-8d47-51ced2403a29")
     }
     initialize();
+
+
   }, []);
 
   const loadNextCard = async () => {
@@ -124,7 +123,7 @@ export default function ReviewScreen() {
     if (userAnswer === null) return Rating.Again;
 
     if (userAnswer === correctAnswer) {
-      return Rating.Good
+      return Rating.Easy
     } else {
       return Rating.Again
     }
@@ -140,8 +139,7 @@ export default function ReviewScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Vocabulary: {vocabulary}</Text>
-      <Text>{question}</Text>
+      <ThemedText>{question}</ThemedText>
 
       {choices.map((choice, index) => (
         <Button
@@ -152,7 +150,7 @@ export default function ReviewScreen() {
         />
       ))}
 
-      {userAnswer !== null && <Text>{feedback}</Text>}
+      {userAnswer !== null && <ThemedText>{feedback}</ThemedText>}
       {userAnswer !== null && <Button title={"Review"} onPress={() => handleReview(getGrade())} />}
     </View>
   );
