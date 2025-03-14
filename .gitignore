@@ -38,7 +38,7 @@ yarn-error.*
 app-example
 
 ios/
-# android/
+android/
 
 .env
 credentials.json

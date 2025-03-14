@@ -57,7 +57,7 @@ Make sure the sentence have adequate context in order to ensure only one answer 
 
 Return the sentence and options in the following json format:
 
-{”question”: “”, “wrongChoices”: [””, ””, ””], "correctWord": ""}`; // Added correctWord to the expected JSON
+{”question”: “”, “choices”: [””, ””, ””], "correctWord": ""}`; // Added correctWord to the expected JSON
     console.log("Generating question")
     const responseString = await this._makeGeminiRequest(prompt);
     console.log("parsing json")
@@ -74,20 +74,9 @@ Return the sentence and options in the following json format:
       console.log(errorMessage);
       throw new Error(errorMessage);
     }
-    console.log(parsedResponse)
+    console.log("Parsed Response:", parsedResponse)
 
     // Validate the structure
-    if (
-      !parsedResponse ||
-      typeof parsedResponse.question !== 'string' ||
-      !Array.isArray(parsedResponse.choices) ||
-      typeof parsedResponse.correctWord !== 'string'
-    ) {
-      const errorMessage = `Invalid response structure from Gemini: ${cleanedResponseString}`;
-      console.log(errorMessage);
-      throw new Error(errorMessage);
-    }
-
     // Specific check for choices length *before* trying to add the correct word
     if (parsedResponse.choices.length < 3) {
       const errorMessage = `Gemini returned too few choices: ${cleanedResponseString}`;

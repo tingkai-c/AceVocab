@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import {
   getNextReviewCard,
   reviewCard,
@@ -14,6 +14,7 @@ import { Grade, Rating } from 'ts-fsrs';
 import { getVocabularyById } from '@/services/local_vocab_db';
 import LLMservice from '@/services/LLMservice'
 import { ThemedText } from '@/components/ThemedText';
+import { loadAllCards } from '@/services/fsrs/storage';
 
 
 const generateQuestion = async (vocab: string): Promise<{ question: string; choices: string[]; correctAnswer: number }> => {
@@ -38,9 +39,16 @@ export default function ReviewScreen() {
   useEffect(() => {
     const initialize = async () => {
       await initFSRS();
-      await loadNextCard();
-      setLoading(false)
+      console.log("Initiali d FSRS")
       await addSelectedPresetId("0ea81186-374c-4a4d-8d47-51ced2403a29")
+      await loadNextCard();
+      const allCards = await loadAllCards();
+
+      for (const card of allCards) {
+        console.log("Card:", card);
+      }
+
+      setLoading(false)
     }
     initialize();
 
@@ -51,12 +59,14 @@ export default function ReviewScreen() {
     setLoading(true); // Start loading before fetching
     try {
       const nextCard = await getNextReviewCard();
+      console.log("Next Card: ", nextCard)
       if (nextCard) {
         const vocab = await getVocabularyById(nextCard.id);
         if (vocab) {
           setIsNew(false)
           setVocabulary(vocab.vocab);
           const generated = await generateQuestion(vocab.vocab);
+          console.log("Generated: ", generated)
           setQuestion(generated.question);
           setChoices(generated.choices);
           setCorrectAnswer(generated.correctAnswer);
@@ -88,7 +98,10 @@ export default function ReviewScreen() {
           setIsNew(false)
         }
       }
-    } finally {
+    } catch (error) {
+      console.log("Error during rendering: ", error)
+    }
+    finally {
       setLoading(false); // End loading
     }
 
@@ -130,7 +143,7 @@ export default function ReviewScreen() {
   }
 
   if (loading) {
-    return <View style={styles.container}><Text>Loading...</Text></View>;
+    return <View style={styles.container}><ThemedText>Loading...</ThemedText></View>;
   }
 
   //   if (!currentCard && choices.length === 0) {
