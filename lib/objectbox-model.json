@@ -1,0 +1,130 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:5309938287876057481",
+      "lastPropertyId": "8:1266844817548678477",
+      "name": "ReviewLog",
+      "properties": [
+        {
+          "id": "1:6359825572876644385",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "3:4702794433479919218",
+          "name": "scheduledDays",
+          "type": 6
+        },
+        {
+          "id": "4:1816532807501489467",
+          "name": "elapsedDays",
+          "type": 6
+        },
+        {
+          "id": "5:7254958384206719230",
+          "name": "review",
+          "type": 10
+        },
+        {
+          "id": "7:1785666007198536650",
+          "name": "rating",
+          "type": 5
+        },
+        {
+          "id": "8:1266844817548678477",
+          "name": "state",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:1158795263895617300",
+      "lastPropertyId": "11:2533958424880565780",
+      "name": "StoredCard",
+      "properties": [
+        {
+          "id": "1:3006202248926030352",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:9210503299132629898",
+          "name": "wordId",
+          "type": 9
+        },
+        {
+          "id": "3:7164957994661741133",
+          "name": "due",
+          "type": 10
+        },
+        {
+          "id": "4:6551993679868175683",
+          "name": "lastReview",
+          "type": 10
+        },
+        {
+          "id": "5:1786837263802076257",
+          "name": "stability",
+          "type": 8
+        },
+        {
+          "id": "6:1117101803835113781",
+          "name": "difficulty",
+          "type": 8
+        },
+        {
+          "id": "7:328513685231115027",
+          "name": "elapsedDays",
+          "type": 6
+        },
+        {
+          "id": "8:7170542008256860894",
+          "name": "scheduledDays",
+          "type": 6
+        },
+        {
+          "id": "9:6521852766023908950",
+          "name": "reps",
+          "type": 6
+        },
+        {
+          "id": "10:6399677796318861211",
+          "name": "lapses",
+          "type": 6
+        },
+        {
+          "id": "11:2533958424880565780",
+          "name": "state",
+          "type": 5
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:7661273143084231881",
+          "name": "reviewLogs",
+          "targetId": "1:5309938287876057481"
+        }
+      ]
+    }
+  ],
+  "lastEntityId": "2:1158795263895617300",
+  "lastIndexId": "0:0",
+  "lastRelationId": "1:7661273143084231881",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    7511837355925835865,
+    648956302279037711
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}
