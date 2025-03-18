@@ -94,7 +94,7 @@ class LocalSqliteHelper {
   }
 
   // New function to get question data
-  Future<Map<String, dynamic>?> getQuestionData(int wordId) async {
+  Future<Question?> getQuestionData(int wordId) async {
     Database db = await instance.database;
     List<Map<String, dynamic>> results = await db.query(
       'questions',
@@ -133,13 +133,13 @@ class LocalSqliteHelper {
     );
 
     // Return all the data in a Map
-    return {
-      'id': questionData['id'], // Question ID
-      'sentence': questionData['question'], // The question sentence
-      'choices': shuffledAnswers, // Randomized answer choices
-      'correctAnswerIndex': correctAnswerIndex, // Index of the correct answer
-      'word': word, //the word
-    };
+    return Question(
+      question: questionData['question'],
+      wordId: wordId.toString(),
+      choices: shuffledAnswers,
+      correctAnswerIndex: correctAnswerIndex,
+      word: word,
+    );
   }
 
   Future<VocabPreset?> getDefaultPreset() async {

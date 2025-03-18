@@ -365,3 +365,19 @@ class VocabPreset {
     required this.wordIds,
   });
 }
+
+class Question {
+  String question;
+  String wordId;
+  List<String> choices;
+  int correctAnswerIndex;
+  String word;
+
+  Question({
+    required this.question,
+    required this.wordId,
+    required this.choices,
+    required this.correctAnswerIndex,
+    required this.word,
+  });
+}

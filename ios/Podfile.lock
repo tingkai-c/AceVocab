@@ -1,5 +1,9 @@
 PODS:
   - Flutter (1.0.0)
+  - ObjectBox (4.1.0)
+  - objectbox_flutter_libs (0.0.1):
+    - Flutter
+    - ObjectBox (= 4.1.0)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -9,12 +13,19 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - ObjectBox
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  objectbox_flutter_libs:
+    :path: ".symlinks/plugins/objectbox_flutter_libs/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   sqflite_darwin:
@@ -22,6 +33,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  ObjectBox: bf3d4b51075d52868422d5d1f2f2141b1d630d30
+  objectbox_flutter_libs: 2f30755c12b0fe104d75445c3ba879e3072eda54
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
 

@@ -40,6 +40,7 @@ dependencies:
   objectbox: ^4.1.0
   objectbox_flutter_libs: any
   collection: any
+  persistent_bottom_nav_bar_v2: ^5.3.1
 
 
 

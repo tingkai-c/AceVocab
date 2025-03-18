@@ -4,6 +4,7 @@ import 'package:acevocab/features/home/home_screen.dart';
 
 import 'package:acevocab/features/settings/settings_screen.dart';
 import 'package:acevocab/theme/app_theme.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -30,17 +31,21 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My App',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      home: Scaffold(
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: AppBottomNavigationBar(
-          // Use the custom widget
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        ),
+      title: 'Persistent Bottom Navigation Bar Demo',
+      home: PersistentTabView(
+        tabs: [
+          PersistentTabConfig(
+            screen: HomeScreen(),
+            item: ItemConfig(icon: Icon(Icons.home), title: "Home"),
+          ),
+
+          PersistentTabConfig(
+            screen: SettingsScreen(),
+            item: ItemConfig(icon: Icon(Icons.settings), title: "Settings"),
+          ),
+        ],
+        navBarBuilder:
+            (navBarConfig) => Style10BottomNavBar(navBarConfig: navBarConfig),
       ),
     );
   }
