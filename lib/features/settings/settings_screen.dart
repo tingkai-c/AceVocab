@@ -1,5 +1,7 @@
+import 'package:acevocab/features/settings/components/icon_style.dart';
+import 'package:acevocab/features/settings/components/settings_group.dart';
+import 'package:acevocab/features/settings/components/settings_item.dart';
 import 'package:flutter/material.dart';
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart';
 import 'package:flutter/cupertino.dart'; // Import CupertinoIcons
 
 class SettingsScreen extends StatelessWidget {
@@ -14,7 +16,8 @@ class SettingsScreen extends StatelessWidget {
           // const is okay here because the list structure is fixed
           // User card
           SettingsGroup(
-            backgroundColor: Colors.blue, // You could make this a light blue.
+            settingsGroupTitle: "Settings",
+            backgroundColor: Colors.white, // You could make this a light blue.
             items: [
               SettingsItem(
                 onTap: () {},
