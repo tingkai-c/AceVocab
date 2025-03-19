@@ -1,3 +1,4 @@
+import 'package:acevocab/features/practice/practice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:acevocab/navigation_bar.dart';
 import 'package:acevocab/features/home/home_screen.dart';
@@ -37,6 +38,13 @@ class _AppState extends State<App> {
           PersistentTabConfig(
             screen: HomeScreen(),
             item: ItemConfig(icon: Icon(Icons.home), title: "Home"),
+          ),
+          PersistentTabConfig(
+            screen: PracticeScreen(),
+            item: ItemConfig(
+              icon: Icon(Icons.settings_accessibility),
+              title: "Practice",
+            ),
           ),
 
           PersistentTabConfig(

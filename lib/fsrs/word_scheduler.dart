@@ -39,25 +39,29 @@ class WordScheduler {
     _sortQueue();
   }
 
-  Future<Card> getNextWord() async {
+  Future<Question?> getNextQuestion() async {
     final dueCards = _getDueCards();
+    int wordId;
 
     if (dueCards.isEmpty) {
       // Explore (no cards to review)
-      return _exploreWord();
+      wordId = await _exploreWord();
+    } else {
+      final random = Random();
+      if (random.nextDouble() < reviewToExploreRatio) {
+        // Review
+        wordId = int.parse(_queue.first.wordId);
+      } else {
+        // Explore
+        wordId = await _exploreWord();
+      }
     }
 
-    final random = Random();
-    if (random.nextDouble() < reviewToExploreRatio) {
-      // Review
-      return _queue.first;
-    } else {
-      // Explore
-      return _exploreWord();
-    }
+    Question? question = await _localSqliteHelper.getQuestionData(wordId);
+    return question;
   }
 
-  Future<Card> _exploreWord() async {
+  Future<int> _exploreWord() async {
     final preset = await _localSqliteHelper.getDefaultPreset();
     if (preset == null) {
       throw Exception('No default preset found.');
@@ -78,21 +82,8 @@ class WordScheduler {
     final wordId = availableWordIds.elementAt(
       random.nextInt(availableWordIds.length),
     );
-    final word = await _localSqliteHelper.getWordFromId(wordId);
 
-    if (word == null) {
-      throw Exception('Word not found for ID: $wordId');
-    }
-
-    // Create a new Card
-    final newCard = Card(
-      wordId: wordId.toString(),
-      due: DateTime.now(),
-      lastReview: DateTime.now(),
-      state: State.newState,
-    );
-
-    return newCard;
+    return wordId;
   }
 
   List<Card> _getDueCards() {
