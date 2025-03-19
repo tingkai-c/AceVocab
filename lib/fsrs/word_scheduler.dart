@@ -3,6 +3,7 @@ import 'package:acevocab/fsrs/fsrs_storage.dart';
 import 'package:acevocab/fsrs/models.dart';
 import 'package:collection/collection.dart'; // For PriorityQueue
 import 'dart:math';
+import 'package:acevocab/fsrs/fsrs_base.dart';
 
 class WordScheduler {
   late final FSRSStorage _storage;
@@ -12,6 +13,7 @@ class WordScheduler {
   );
   List<Card> _cards = []; // In-memory list of cards
   double reviewToExploreRatio = 0.7;
+  final FSRS _fsrs = FSRS();
 
   Future<void> init() async {
     _storage = await FSRSStorage.getInstance();
@@ -20,23 +22,54 @@ class WordScheduler {
     _sortQueue();
   }
 
-  Future<void> updateCard(Card card) async {
-    if (card.id == null) {
-      throw Exception('Card ID cannot be null when updating.');
+  Future<void> updateCard(String wordId, Rating rating) async {
+    var card = _cards.firstWhereOrNull((c) => c.wordId == wordId);
+    final now = DateTime.now();
+    late final Card newCard;
+    late final ReviewLog newReviewLog;
+
+    if (card == null) {
+      // Card not found, create a new one.
+      Question? question = await _localSqliteHelper.getQuestionData(
+        int.parse(wordId),
+      );
+      if (question == null) {
+        throw Exception('Word not found in database: $wordId');
+      }
+      card = Card(wordId: wordId, due: now, lastReview: now);
+      Map<Rating, SchedulingInfo> info = _fsrs.repeat(card, now);
+      newCard = info[rating]!.card;
+      newReviewLog = info[rating]!.reviewLog;
+      final newId = await _storage.createCard(newCard);
+    } else {
+      // Card found, update it.
+
+      if (card.id == null) {
+        throw Exception('Card ID cannot be null when updating.');
+      }
+      Map<Rating, SchedulingInfo> info = _fsrs.repeat(card, now);
+      newCard = info[rating]!.card;
+      newReviewLog = info[rating]!.reviewLog;
+
+      // Delete from ObjectBox and in-memory list
+      await _storage.deleteCard(card.id!);
+      _cards.removeWhere((c) => c.id == card!.id);
+
+      // Add the updated card (ObjectBox will assign a new ID)
+      final newId = await _storage.createCard(newCard);
     }
 
-    // Delete from ObjectBox and in-memory list
-    await _storage.deleteCard(card.id!);
-    _cards.removeWhere((c) => c.id == card.id);
-
-    // Add the updated card (ObjectBox will assign a new ID)
-    final newId = await _storage.createCard(card);
-    final newCard = await _storage.getCardById(newId);
-    if (newCard == null) {
+    final storedCard = await _storage.getCardByWordId(wordId);
+    if (storedCard == null) {
       throw Exception('new card created is null');
     }
+    storedCard.reviewLogs.add(newReviewLog);
+    await _storage.updateCard(storedCard);
+    // newCard.reviewLogs.add(newReviewLog);
+
     _cards.add(newCard);
     _sortQueue();
+    print(_queue);
   }
 
   Future<Question?> getNextQuestion() async {

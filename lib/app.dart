@@ -1,10 +1,7 @@
 import 'package:acevocab/features/practice/practice_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:acevocab/navigation_bar.dart';
 import 'package:acevocab/features/home/home_screen.dart';
-
 import 'package:acevocab/features/settings/settings_screen.dart';
-import 'package:acevocab/theme/app_theme.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class App extends StatefulWidget {
@@ -15,20 +12,6 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  int _selectedIndex = 0;
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomeScreen(),
-    //const PracticeScreen(),
-    const SettingsScreen(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
