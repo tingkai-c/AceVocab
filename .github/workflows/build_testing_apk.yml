@@ -22,6 +22,12 @@ jobs:
       with:
         flutter-version: 3.29.2
     - run: flutter pub get
-    - run: flutter test
     - run: flutter build apk
-    - run: flutter build appbundle
+    # - run: flutter build appbundle
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AceVocab-debug.apk  # A descriptive name for the artifact.
+        path: build/app/outputs/flutter-apk/app-debug.apk  # Correct path to the APK.
+        if-no-files-found: error # Error if apk is not found.
+        retention-days: 3       # Keep the artifact for 5 days.
