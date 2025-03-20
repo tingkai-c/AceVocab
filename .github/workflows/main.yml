@@ -9,7 +9,11 @@ on:
 jobs:
   build_and_upload:
     runs-on: macos-latest  # Use the latest macOS runner.
-
+    env:
+      APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
+      APP_STORE_APP_ID: ${{ secrets.APP_STORE_APP_ID }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -34,11 +38,6 @@ jobs:
         run: /usr/bin/python3 -m pip install codemagic-cli-tools # Use specific python3 path
         # Alternatively:  pip3 install codemagic-cli-tools  (If pip3 is correctly configured)
 
-      - name: Set App Store Connect API Key Environment Variables
-        run: |
-          echo "APP_STORE_CONNECT_ISSUER_ID=${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" >> $GITHUB_ENV
-          echo "APP_STORE_CONNECT_KEY_IDENTIFIER=${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}" >> $GITHUB_ENV
-          echo "APP_STORE_CONNECT_PRIVATE_KEY=${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}" >> $GITHUB_ENV
 
       - name: Initialize Keychain
         run: keychain initialize
