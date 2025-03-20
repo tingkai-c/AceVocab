@@ -14,6 +14,7 @@ jobs:
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
       APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
       APP_STORE_APP_ID: ${{ secrets.APP_STORE_APP_ID }}
+      CERT_KEY: ${{ secrets.CERT_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,6 +28,8 @@ jobs:
 
       - name: Initialize Keychain
         run: keychain initialize
+      - name: Initialize key
+        run: echo "$CERT_KEY" > cert_key
 
       - name: Fetch Signing Files
         run: |
