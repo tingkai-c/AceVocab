@@ -18,25 +18,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.29.2'  # !!! IMPORTANT: Replace with YOUR Flutter version !!!
-          channel: 'stable'  # Or 'beta', 'dev', etc.
+      
 
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ runner.tool_cache }}/flutter
-            ~/.pub-cache
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-flutter-
 
       - name: Install Codemagic CLI Tools
-        run: /usr/bin/python3 -m pip install codemagic-cli-tools # Use specific python3 path
-        # Alternatively:  pip3 install codemagic-cli-tools  (If pip3 is correctly configured)
+        run: pip install codemagic-cli-tools 
 
 
       - name: Initialize Keychain
@@ -57,7 +43,12 @@ jobs:
 
       - name: Update Xcode Project Settings
         run: xcode-project use-profiles
-
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v3
+        with:
+          version: '3.29.2'  # !!! IMPORTANT: Replace with YOUR Flutter version !!!
+          channel: 'stable'  # Or 'beta', 'dev', etc.
       - name: Install Flutter Dependencies
         run: flutter pub get
 
