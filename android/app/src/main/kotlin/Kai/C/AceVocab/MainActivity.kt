@@ -1,4 +1,4 @@
-package kai.c.acevocab
+package Kai.C.AceVocab
 
 import io.flutter.embedding.android.FlutterActivity
 
