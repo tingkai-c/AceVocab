@@ -1,4 +1,4 @@
-name: Push iOS build on TestFlight
+name: Push iOS build on TestFlightasdasd
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
         run: |
           flutter clean
           flutter pub get
-          # flutter analyze --fatal-infos
+        #   flutter analyze --fatal-infos
 
       - name: Install the CodeMagic CLI
         run:  pip install codemagic-cli-tools
@@ -45,17 +45,11 @@ jobs:
           mkdir -p "$PROFILES_HOME"
           PROFILE_PATH="$(mktemp "$PROFILES_HOME"/$(uuidgen).mobileprovision)"
           echo ${PROVISIONING_PROFILE} | base64 --decode > "$PROFILE_PATH"
-          echo "Saved provisioning profile $PROFILE_PATH"
-          ls -l "$PROFILES_HOME"  # List files
-          plutil -p "$PROFILE_PATH"  # Inspect the provisioning profile (human-readable)
+          echo "Saved provisioning profile $PROFILE_PATH"   
 
       - name: Set up Distribution Certificate
         run: |
           echo $DISTRIBUTION_CERTIFICATE | base64 --decode > /tmp/certificate.p12
-          ls -l /tmp
-          openssl pkcs12 -in /tmp/certificate.p12 -info -nodes -passin pass:$DISTRIBUTION_CERTIFICATE_PASSWORD # Check certificate
-          security find-identity -v -p codesigning # List code signing identities in keychain
-
           keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password "$DISTRIBUTION_CERTIFICATE_PASSWORD"
 
       - name: Set up Code signing settings on Xcode project
@@ -77,4 +71,4 @@ jobs:
         run: |
           APP_FILE=$(find $(pwd) -name "*.ipa")
           app-store-connect publish \
-          --path "$APP_FILE"
+          --path "$APP_FILE" 
