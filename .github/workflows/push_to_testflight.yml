@@ -46,8 +46,7 @@ jobs:
           PROFILE_PATH="$(mktemp "$PROFILES_HOME"/$(uuidgen).mobileprovision)"
           echo ${PROVISIONING_PROFILE} | base64 --decode > "$PROFILE_PATH"
           echo "Saved provisioning profile $PROFILE_PATH"
-          ls -l "$PROFILES_HOME"  # List files
-          plutil -p "$PROFILE_PATH"  # Inspect the provisioning profile (human-readable)
+
 
       - name: Set up Distribution Certificate
         run: |
