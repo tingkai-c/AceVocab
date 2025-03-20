@@ -45,10 +45,10 @@ jobs:
         run: xcode-project use-profiles
         
       - name: Setup Flutter
-        uses: subosito/flutter-action@v3
+        uses: flutter-actions/setup-flutter@v3
         with:
-          version: '3.29.2'  # !!! IMPORTANT: Replace with YOUR Flutter version !!!
-          channel: 'stable'  # Or 'beta', 'dev', etc.
+          version: 3.29.2  # !!! IMPORTANT: Replace with YOUR Flutter version !!!
+          channel: stable  # Or 'beta', 'dev', etc.
       - name: Install Flutter Dependencies
         run: flutter pub get
 
