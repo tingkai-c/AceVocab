@@ -1,0 +1,96 @@
+name: Flutter iOS Build and Upload
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the main branch. Adjust as needed.
+  workflow_dispatch:  # Allows manual triggering from the GitHub Actions tab.
+
+jobs:
+  build_and_upload:
+    runs-on: macos-latest  # Use the latest macOS runner.
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2'  # !!! IMPORTANT: Replace with YOUR Flutter version !!!
+          channel: 'stable'  # Or 'beta', 'dev', etc.
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ runner.tool_cache }}/flutter
+            ~/.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install Codemagic CLI Tools
+        run: /usr/bin/python3 -m pip install codemagic-cli-tools # Use specific python3 path
+        # Alternatively:  pip3 install codemagic-cli-tools  (If pip3 is correctly configured)
+
+      - name: Set App Store Connect API Key Environment Variables
+        run: |
+          echo "APP_STORE_CONNECT_ISSUER_ID=${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" >> $GITHUB_ENV
+          echo "APP_STORE_CONNECT_KEY_IDENTIFIER=${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}" >> $GITHUB_ENV
+          echo "APP_STORE_CONNECT_PRIVATE_KEY=${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}" >> $GITHUB_ENV
+
+      - name: Initialize Keychain
+        run: keychain initialize
+
+      - name: Fetch Signing Files
+        run: |
+          app-store-connect fetch-signing-files $(xcode-project detect-bundle-id) \
+              --platform IOS \
+              --type IOS_APP_STORE \
+              --certificate-key=@file:cert_key \
+              --create
+        env:
+          CERT_KEY: ${{ secrets.CERT_KEY }}
+
+      - name: Add Certificates to Keychain
+        run: keychain add-certificates
+
+      - name: Update Xcode Project Settings
+        run: xcode-project use-profiles
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Cache CocoaPods dependencies
+        uses: actions/cache@v3
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install CocoaPods Dependencies
+        run: |
+          if [ -f ios/Podfile ]; then
+            cd ios && pod install && cd ..  # More robust Podfile check
+          else
+            echo "No Podfile found. Skipping CocoaPods installation."
+          fi
+
+      - name: Build iOS App
+        run: |
+          flutter build ipa --release \
+              --export-options-plist=$HOME/export_options.plist
+
+      - name: Find IPA File (Robust Approach)
+        id: find_ipa
+        run: |
+          IPA_PATH=$(find . -name "*.ipa" -print0 | xargs -0)
+          echo "IPA_PATH=$IPA_PATH" >> $GITHUB_OUTPUT
+
+      - name: Publish to App Store Connect
+        run: app-store-connect publish --path "${{ steps.find_ipa.outputs.IPA_PATH }}"
+
+      - name: Restore Login Keychain
+        run: keychain use-login
