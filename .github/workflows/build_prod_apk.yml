@@ -54,12 +54,14 @@ jobs:
         run: flutter build appbundle
         #9 Upload Artifacts
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Releases
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error # Error if apk is not found.
+          retention-days: 3       # Keep the artifact for 5 days.
   
 
         #10 Extract Version
