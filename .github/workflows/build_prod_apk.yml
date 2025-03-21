@@ -101,7 +101,7 @@ jobs:
       - name: Upload to google play
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: ${{ SERVICE_ACCOUNT_JSON }}
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: kai.c.acevocab
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: alpha
