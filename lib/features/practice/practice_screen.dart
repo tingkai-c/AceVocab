@@ -1,3 +1,4 @@
+import 'package:acevocab/features/common/ui/clickable_text.dart';
 import 'package:acevocab/fsrs/models.dart' as fsrs;
 import 'package:acevocab/fsrs/word_scheduler.dart';
 import 'package:flutter/material.dart';
@@ -112,49 +113,55 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Imgay')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child:
-            _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Column(
-                  // Use a ternary operator for loading
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (_currentQuestion != null) ...[
-                      Text(
-                        _currentQuestion!.question,
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      SizedBox(height: 20),
-                      ..._currentQuestion!.choices.asMap().entries.map(
-                        (entry) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: ElevatedButton(
-                            onPressed: () => _handleAnswer(entry.key),
-                            child: Text(entry.value),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  _answered
-                                      ? (entry.key ==
-                                              _currentQuestion!
-                                                  .correctAnswerIndex
-                                          ? Colors.green
-                                          : Colors.red)
-                                      : null,
+      appBar: AppBar(title: const Text('Practice')),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child:
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Column(
+                    // Use a ternary operator for loading
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (_currentQuestion != null) ...[
+                        ClickableText(
+                          // Replace the Text widget
+                          text: _currentQuestion!.question,
+                          style: TextStyle(fontSize: 20),
+                          textAlign:
+                              TextAlign.center, // Example of using textAlign
+                          // maxLines: 3, //example of using maxLines
+                        ),
+                        SizedBox(height: 20),
+                        ..._currentQuestion!.choices.asMap().entries.map(
+                          (entry) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ElevatedButton(
+                              onPressed: () => _handleAnswer(entry.key),
+                              child: Text(entry.value),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    _answered
+                                        ? (entry.key ==
+                                                _currentQuestion!
+                                                    .correctAnswerIndex
+                                            ? Colors.green
+                                            : Colors.red)
+                                        : null,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ] else ...[
-                      // Show feedback message if no question
-                      Text(_feedbackMessage),
+                      ] else ...[
+                        // Show feedback message if no question
+                        Text(_feedbackMessage),
+                      ],
+                      SizedBox(height: 20),
+                      Text(_feedbackMessage), // Show Feedback
                     ],
-                    SizedBox(height: 20),
-                    Text(_feedbackMessage), // Show Feedback
-                  ],
-                ),
+                  ),
+        ),
       ),
     );
   }
