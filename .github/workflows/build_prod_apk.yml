@@ -104,7 +104,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: kai.c.acevocab
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          track: qa
+          track: internal
           status: completed
           inAppUpdatePriority: 2
           # whatsNewDirectory: distribution/whatsnew
