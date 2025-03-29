@@ -36,7 +36,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 title: 'Dark mode',
                 subtitle: "Automatic",
-                trailing: Switch.adaptive(
+                trailing: Switch(
                   value: false, //  Consider using a state variable for this.
                   onChanged: (value) {},
                 ),
@@ -51,7 +51,7 @@ class SettingsScreen extends StatelessWidget {
                 icons: Icons.info_rounded,
                 iconStyle: IconStyle(backgroundColor: Colors.purple),
                 title: 'About',
-                subtitle: "Learn more about Ziar'App",
+                subtitle: "Learn more about this App",
               ),
             ],
           ),
