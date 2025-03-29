@@ -1,3 +1,4 @@
+import 'package:acevocab/data/user_data.dart';
 import 'package:acevocab/features/common/ui/clickable_text.dart';
 import 'package:acevocab/fsrs/models.dart' as fsrs;
 import 'package:acevocab/fsrs/word_scheduler.dart';
@@ -18,28 +19,56 @@ class _PracticeScreenState extends State<PracticeScreen> {
   bool _answered = false;
   late fsrs.Parameters _parameters; // Although unused, kept as in original
   bool _isLoading = true; // Start in loading state
+  int _currentStreak = 0;
 
   @override
   void initState() {
     super.initState();
-    _wordScheduler = WordScheduler();
     _parameters = fsrs.Parameters();
-    _initScheduler();
+    // Call the async initialization method here
+    _initializeSchedulerAndLoadFirstQuestion();
   }
 
-  Future<void> _initScheduler() async {
-    // No need to setState for isLoading = true here, it's the initial state.
-    await _wordScheduler.init();
-    // Load the first question. _loadNextQuestion handles the loading state internally.
+  // New method to handle async initialization
+  Future<void> _initializeSchedulerAndLoadFirstQuestion() async {
+    // Get the WordScheduler instance asynchronously
+    _wordScheduler = await WordScheduler.getInstance();
+    UserData userData = UserDataHelper.instance.readUserData();
+    int initialStreak = userData.currentStreak;
+    print("Loaded initial streak: $initialStreak");
+
+    // Initialize local state
+    // Ensure setState is called if initialization happens after initial build
+    if (mounted) {
+      setState(() {
+        _currentStreak = initialStreak;
+      });
+    } else {
+      _currentStreak = initialStreak; // Set directly if before build
+    }
+
+    // Now that _wordScheduler is initialized, load the first question
+    // _loadNextQuestion handles setting isLoading state
     await _loadNextQuestion();
-    // If mounted check is good practice in async initState methods,
-    // although less critical if _loadNextQuestion handles its own state updates.
-    if (!mounted) return;
-    // The loading state is set to false inside _loadNextQuestion
   }
+
+  // _initScheduler is no longer needed as its logic is merged into
+  // _initializeSchedulerAndLoadFirstQuestion and _loadNextQuestion
 
   Future<void> _loadNextQuestion() async {
     // Set state to indicate loading and clear previous question data
+    // Ensure _wordScheduler is initialized before proceeding
+    // This check might be redundant if initialization order is guaranteed,
+    // but adds safety.
+    // if (_wordScheduler == null) {
+    //   print("Error: WordScheduler not initialized before loading question.");
+    //   setState(() {
+    //     _isLoading = false;
+    //     _feedbackMessage = "Initialization error. Please restart.";
+    //   });
+    //   return;
+    // }
+
     setState(() {
       _isLoading = true;
       _currentQuestion = null;
@@ -49,6 +78,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
     fsrs.Question? question;
     try {
+      // Use the initialized _wordScheduler instance
       question = await _wordScheduler.getNextQuestion();
     } catch (e) {
       print("Error loading next question: $e");
@@ -89,14 +119,19 @@ class _PracticeScreenState extends State<PracticeScreen> {
         selectedAnswerIndex == _currentQuestion!.correctAnswerIndex;
     final fsrs.Rating rating = isCorrect ? fsrs.Rating.good : fsrs.Rating.again;
 
-    // Update UI immediately to show feedback and selected state
+    // Update streak and UI immediately
     setState(() {
+      if (isCorrect) {
+        _currentStreak++; // Increment streak
+        _feedbackMessage = 'Correct!';
+      } else {
+        _currentStreak = 0; // Reset streak
+        _feedbackMessage =
+            'Incorrect. The correct answer was: ${_currentQuestion!.choices[_currentQuestion!.correctAnswerIndex]}';
+      }
       _answered = true;
-      _feedbackMessage =
-          isCorrect
-              ? 'Correct!'
-              : 'Incorrect. The correct answer was: ${_currentQuestion!.choices[_currentQuestion!.correctAnswerIndex]}';
     });
+    UserDataHelper.instance.updateUserStreak(_currentStreak);
 
     // Process the answer asynchronously
     await _processAnswer(rating);
@@ -274,6 +309,24 @@ class _PracticeScreenState extends State<PracticeScreen> {
                           ),
                         ),
                       ],
+                      // --- Display Streak Counter ---
+                      const Spacer(), // Pushes the streak to the bottom
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10.0,
+                          ), // Add some space above
+                          child: Text(
+                            'Streak: $_currentStreak',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.blueGrey, // Optional styling
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
         ),

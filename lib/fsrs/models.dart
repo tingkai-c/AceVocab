@@ -29,21 +29,34 @@ class ReviewLog {
   @Id()
   int id = 0;
 
+  String wordId; // Added wordId
+
   @Property(type: PropertyType.int)
   int rating;
   int scheduledDays;
   int elapsedDays;
   DateTime? review;
+  DateTime? due; // Added due date
+  double? updatedStability; // Added stability after review
+  double? updatedDifficulty; // Added difficulty after review
+  int? lapses; // Added lapses count
+  int? reps; // Added reps count
 
   @Property(type: PropertyType.int)
   int state; // Store the integer value
 
   // Constructor with optional named parameters and defaults
   ReviewLog({
+    required this.wordId, // Made wordId required
     Rating ratingEnum = Rating.again,
     this.scheduledDays = 0,
     this.elapsedDays = 0,
     this.review,
+    this.due, // Added due
+    this.updatedStability, // Added stability
+    this.updatedDifficulty, // Added difficulty
+    this.lapses, // Added lapses
+    this.reps, // Added reps
     State stateEnum = State.newState, //Now a default value
   }) : state = stateEnum.val,
        rating = ratingEnum.val;
@@ -58,7 +71,7 @@ class ReviewLog {
 
   @override
   String toString() {
-    return 'ReviewLog{id: $id, rating: $ratingEnum, scheduledDays: $scheduledDays, elapsedDays: $elapsedDays, review: $review, state: $stateEnum}';
+    return 'ReviewLog{id: $id, wordId: $wordId, rating: $ratingEnum, scheduledDays: $scheduledDays, elapsedDays: $elapsedDays, review: $review, state: $stateEnum, due: $due, updatedStability: $updatedStability, updatedDifficulty: $updatedDifficulty, lapses: $lapses, reps: $reps}';
   }
 }
 
@@ -289,41 +302,65 @@ class SchedulingCards {
       Rating.again: SchedulingInfo(
         again,
         ReviewLog(
+          wordId: card.wordId,
           ratingEnum: Rating.again,
           scheduledDays: again.scheduledDays,
           elapsedDays: card.elapsedDays,
           review: now,
-          stateEnum: card.state,
+          stateEnum: card.state, // State *before* this review
+          due: again.due,
+          updatedStability: again.stability,
+          updatedDifficulty: again.difficulty,
+          lapses: again.lapses,
+          reps: again.reps,
         ),
       ),
       Rating.hard: SchedulingInfo(
         hard,
         ReviewLog(
+          wordId: card.wordId,
           ratingEnum: Rating.hard,
           scheduledDays: hard.scheduledDays,
           elapsedDays: card.elapsedDays,
           review: now,
-          stateEnum: card.state,
+          stateEnum: card.state, // State *before* this review
+          due: hard.due,
+          updatedStability: hard.stability,
+          updatedDifficulty: hard.difficulty,
+          lapses: hard.lapses,
+          reps: hard.reps,
         ),
       ),
       Rating.good: SchedulingInfo(
         good,
         ReviewLog(
+          wordId: card.wordId,
           ratingEnum: Rating.good,
           scheduledDays: good.scheduledDays,
           elapsedDays: card.elapsedDays,
           review: now,
-          stateEnum: card.state,
+          stateEnum: card.state, // State *before* this review
+          due: good.due,
+          updatedStability: good.stability,
+          updatedDifficulty: good.difficulty,
+          lapses: good.lapses,
+          reps: good.reps,
         ),
       ),
       Rating.easy: SchedulingInfo(
         easy,
         ReviewLog(
+          wordId: card.wordId,
           ratingEnum: Rating.easy,
           scheduledDays: easy.scheduledDays,
           elapsedDays: card.elapsedDays,
           review: now,
-          stateEnum: card.state,
+          stateEnum: card.state, // State *before* this review
+          due: easy.due,
+          updatedStability: easy.stability,
+          updatedDifficulty: easy.difficulty,
+          lapses: easy.lapses,
+          reps: easy.reps,
         ),
       ),
     };

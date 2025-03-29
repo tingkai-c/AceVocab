@@ -14,6 +14,7 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'data/user_data.dart';
 import 'fsrs/models.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -22,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 5309938287876057481),
       name: 'ReviewLog',
-      lastPropertyId: const obx_int.IdUid(8, 1266844817548678477),
+      lastPropertyId: const obx_int.IdUid(14, 7909433209153310432),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -53,6 +54,36 @@ final _entities = <obx_int.ModelEntity>[
         obx_int.ModelProperty(
             id: const obx_int.IdUid(8, 1266844817548678477),
             name: 'state',
+            type: 5,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 6744436584287284985),
+            name: 'wordId',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 1630098081239462524),
+            name: 'due',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 566902794794185713),
+            name: 'updatedStability',
+            type: 8,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 4168751167464322848),
+            name: 'updatedDifficulty',
+            type: 8,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 7038422188726434232),
+            name: 'lapses',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(14, 7909433209153310432),
+            name: 'reps',
             type: 6,
             flags: 0)
       ],
@@ -126,6 +157,45 @@ final _entities = <obx_int.ModelEntity>[
             name: 'reviewLogs',
             targetId: const obx_int.IdUid(1, 5309938287876057481))
       ],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(3, 9021389163134947345),
+      name: 'UserData',
+      lastPropertyId: const obx_int.IdUid(6, 1424096076367625873),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 8670821462265353924),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 1076183540143476286),
+            name: 'currentStreak',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 4495088772986195477),
+            name: 'lastStreakUpdate',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 7210647736254453822),
+            name: 'notificationsEnabled',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 493903196092975523),
+            name: 'themeMode',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 1424096076367625873),
+            name: 'fontSizeMultiplier',
+            type: 8,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -164,7 +234,7 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(2, 1158795263895617300),
+      lastEntityId: const obx_int.IdUid(3, 9021389163134947345),
       lastIndexId: const obx_int.IdUid(0, 0),
       lastRelationId: const obx_int.IdUid(1, 7661273143084231881),
       lastSequenceId: const obx_int.IdUid(0, 0),
@@ -186,13 +256,20 @@ obx_int.ModelDefinition getObjectBoxModel() {
           object.id = id;
         },
         objectToFB: (ReviewLog object, fb.Builder fbb) {
-          fbb.startTable(9);
+          final wordIdOffset = fbb.writeString(object.wordId);
+          fbb.startTable(15);
           fbb.addInt64(0, object.id);
           fbb.addInt64(2, object.scheduledDays);
           fbb.addInt64(3, object.elapsedDays);
           fbb.addInt64(4, object.review?.millisecondsSinceEpoch);
           fbb.addInt32(6, object.rating);
-          fbb.addInt64(7, object.state);
+          fbb.addInt32(7, object.state);
+          fbb.addOffset(8, wordIdOffset);
+          fbb.addInt64(9, object.due?.millisecondsSinceEpoch);
+          fbb.addFloat64(10, object.updatedStability);
+          fbb.addFloat64(11, object.updatedDifficulty);
+          fbb.addInt64(12, object.lapses);
+          fbb.addInt64(13, object.reps);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -201,6 +278,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
           final reviewValue =
               const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 12);
+          final dueValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 22);
+          final wordIdParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 20, '');
           final scheduledDaysParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           final elapsedDaysParam =
@@ -208,15 +289,32 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final reviewParam = reviewValue == null
               ? null
               : DateTime.fromMillisecondsSinceEpoch(reviewValue);
+          final dueParam = dueValue == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(dueValue);
+          final updatedStabilityParam = const fb.Float64Reader()
+              .vTableGetNullable(buffer, rootOffset, 24);
+          final updatedDifficultyParam = const fb.Float64Reader()
+              .vTableGetNullable(buffer, rootOffset, 26);
+          final lapsesParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 28);
+          final repsParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 30);
           final object = ReviewLog(
+              wordId: wordIdParam,
               scheduledDays: scheduledDaysParam,
               elapsedDays: elapsedDaysParam,
-              review: reviewParam)
+              review: reviewParam,
+              due: dueParam,
+              updatedStability: updatedStabilityParam,
+              updatedDifficulty: updatedDifficultyParam,
+              lapses: lapsesParam,
+              reps: repsParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..rating =
                 const fb.Int32Reader().vTableGet(buffer, rootOffset, 16, 0)
             ..state =
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0);
+                const fb.Int32Reader().vTableGet(buffer, rootOffset, 18, 0);
 
           return object;
         }),
@@ -285,6 +383,53 @@ obx_int.ModelDefinition getObjectBoxModel() {
           obx_int.InternalToManyAccess.setRelInfo<StoredCard>(object.reviewLogs,
               store, obx_int.RelInfo<StoredCard>.toMany(1, object.id));
           return object;
+        }),
+    UserData: obx_int.EntityDefinition<UserData>(
+        model: _entities[2],
+        toOneRelations: (UserData object) => [],
+        toManyRelations: (UserData object) => {},
+        getId: (UserData object) => object.id,
+        setId: (UserData object, int id) {
+          object.id = id;
+        },
+        objectToFB: (UserData object, fb.Builder fbb) {
+          final themeModeOffset = fbb.writeString(object.themeMode);
+          fbb.startTable(7);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.currentStreak);
+          fbb.addInt64(2, object.lastStreakUpdate?.millisecondsSinceEpoch);
+          fbb.addBool(3, object.notificationsEnabled);
+          fbb.addOffset(4, themeModeOffset);
+          fbb.addFloat64(5, object.fontSizeMultiplier);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final lastStreakUpdateValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 8);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final currentStreakParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          final notificationsEnabledParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 10, false);
+          final themeModeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final fontSizeMultiplierParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          final object = UserData(
+              id: idParam,
+              currentStreak: currentStreakParam,
+              notificationsEnabled: notificationsEnabledParam,
+              themeMode: themeModeParam,
+              fontSizeMultiplier: fontSizeMultiplierParam)
+            ..lastStreakUpdate = lastStreakUpdateValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(lastStreakUpdateValue);
+
+          return object;
         })
   };
 
@@ -316,6 +461,30 @@ class ReviewLog_ {
   /// See [ReviewLog.state].
   static final state =
       obx.QueryIntegerProperty<ReviewLog>(_entities[0].properties[5]);
+
+  /// See [ReviewLog.wordId].
+  static final wordId =
+      obx.QueryStringProperty<ReviewLog>(_entities[0].properties[6]);
+
+  /// See [ReviewLog.due].
+  static final due =
+      obx.QueryDateProperty<ReviewLog>(_entities[0].properties[7]);
+
+  /// See [ReviewLog.updatedStability].
+  static final updatedStability =
+      obx.QueryDoubleProperty<ReviewLog>(_entities[0].properties[8]);
+
+  /// See [ReviewLog.updatedDifficulty].
+  static final updatedDifficulty =
+      obx.QueryDoubleProperty<ReviewLog>(_entities[0].properties[9]);
+
+  /// See [ReviewLog.lapses].
+  static final lapses =
+      obx.QueryIntegerProperty<ReviewLog>(_entities[0].properties[10]);
+
+  /// See [ReviewLog.reps].
+  static final reps =
+      obx.QueryIntegerProperty<ReviewLog>(_entities[0].properties[11]);
 }
 
 /// [StoredCard] entity fields to define ObjectBox queries.
@@ -367,4 +536,31 @@ class StoredCard_ {
   /// see [StoredCard.reviewLogs]
   static final reviewLogs =
       obx.QueryRelationToMany<StoredCard, ReviewLog>(_entities[1].relations[0]);
+}
+
+/// [UserData] entity fields to define ObjectBox queries.
+class UserData_ {
+  /// See [UserData.id].
+  static final id =
+      obx.QueryIntegerProperty<UserData>(_entities[2].properties[0]);
+
+  /// See [UserData.currentStreak].
+  static final currentStreak =
+      obx.QueryIntegerProperty<UserData>(_entities[2].properties[1]);
+
+  /// See [UserData.lastStreakUpdate].
+  static final lastStreakUpdate =
+      obx.QueryDateProperty<UserData>(_entities[2].properties[2]);
+
+  /// See [UserData.notificationsEnabled].
+  static final notificationsEnabled =
+      obx.QueryBooleanProperty<UserData>(_entities[2].properties[3]);
+
+  /// See [UserData.themeMode].
+  static final themeMode =
+      obx.QueryStringProperty<UserData>(_entities[2].properties[4]);
+
+  /// See [UserData.fontSizeMultiplier].
+  static final fontSizeMultiplier =
+      obx.QueryDoubleProperty<UserData>(_entities[2].properties[5]);
 }

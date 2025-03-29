@@ -14,6 +14,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       title: 'Persistent Bottom Navigation Bar Demo',
       home: PersistentTabView(

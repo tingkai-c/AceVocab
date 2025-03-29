@@ -1,6 +1,8 @@
 import 'package:acevocab/features/settings/components/icon_style.dart';
 import 'package:acevocab/features/settings/components/settings_group.dart';
 import 'package:acevocab/features/settings/components/settings_item.dart';
+import 'package:acevocab/fsrs/fsrs_storage.dart';
+import 'package:acevocab/fsrs/word_scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart'; // Import CupertinoIcons
 
@@ -38,7 +40,9 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: "Automatic",
                 trailing: Switch(
                   value: false, //  Consider using a state variable for this.
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    value = value;
+                  },
                 ),
               ),
             ],
@@ -57,7 +61,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           // You can add a settings title
           SettingsGroup(
-            settingsGroupTitle: "Account",
+            settingsGroupTitle: "Dangerous",
             items: [
               SettingsItem(
                 onTap: () {},
@@ -65,7 +69,10 @@ class SettingsScreen extends StatelessWidget {
                 title: "Sign Out",
               ),
               SettingsItem(
-                onTap: () {},
+                onTap: () async {
+                  WordScheduler _w = await WordScheduler.getInstance();
+                  _w.clearAllData();
+                },
                 icons: CupertinoIcons.delete_solid,
                 title: "Delete account",
                 titleStyle: TextStyle(

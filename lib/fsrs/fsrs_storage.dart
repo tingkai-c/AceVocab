@@ -1,27 +1,27 @@
+import 'package:acevocab/data/objectbox_helper.dart';
+
 import 'models.dart'; // Import your model classes (Card, StoredCard, ReviewLog, etc.)
 import '../objectbox.g.dart'; // Import the generated ObjectBox code
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 class FSRSStorage {
   late final Store _store;
   late final Box<StoredCard> _cardBox;
   late final Box<ReviewLog> _reviewLogBox;
+  late final ObjectBoxHelper _objectBoxHelper;
 
   // Singleton pattern (optional, but good practice for database access)
   static FSRSStorage? _instance;
 
-  FSRSStorage._internal(this._store) {
-    _cardBox = _store.box<StoredCard>();
-    _reviewLogBox = _store.box<ReviewLog>();
+  FSRSStorage._internal() {
+    _objectBoxHelper = ObjectBoxHelper.instance;
+    _cardBox = _objectBoxHelper.cardBox;
+    _reviewLogBox = _objectBoxHelper.reviewLogBox;
   }
 
   static Future<FSRSStorage> getInstance() async {
     if (_instance == null) {
-      Directory appDocDir = await getApplicationDocumentsDirectory();
-      String dbPath = '${appDocDir.path}/objectbox';
-      final store = await openStore(directory: dbPath);
-      _instance = FSRSStorage._internal(store);
+      ObjectBoxHelper.init();
+      _instance = FSRSStorage._internal();
     }
     return _instance!;
   }
@@ -95,10 +95,27 @@ class FSRSStorage {
     }
     conflictQuery.close();
 
-    // Convert the updated Card to a StoredCard
-    StoredCard updatedStoredCard = cardToStoredCard(card);
-    updatedStoredCard.id = existingStoredCard.id; // Ensure correct ID
-    _cardBox.put(updatedStoredCard); // Update
+    // Update the properties of the existing StoredCard
+
+    existingStoredCard.due = card.due;
+    existingStoredCard.lastReview = card.lastReview;
+    existingStoredCard.stability = card.stability;
+    existingStoredCard.difficulty = card.difficulty;
+    existingStoredCard.elapsedDays = card.elapsedDays;
+    existingStoredCard.scheduledDays = card.scheduledDays;
+    existingStoredCard.reps = card.reps;
+    existingStoredCard.lapses = card.lapses;
+    existingStoredCard.stateEnum = card.state;
+
+    // Update the review logs relationship
+    // ObjectBox handles adding new ReviewLog entities found in the list
+    // and updating the relationship when the StoredCard is put.
+    existingStoredCard.reviewLogs.clear(); // Clear existing relations first
+    existingStoredCard.reviewLogs.addAll(
+      card.reviewLogs,
+    ); // Add all logs from the input card
+
+    _cardBox.put(existingStoredCard); // Put the updated existing StoredCard
   }
 
   // Delete a card by its ObjectBox ID.
@@ -116,6 +133,20 @@ class FSRSStorage {
       _cardBox.remove(storedCard.id);
     }
   }
+
+  // Clear all cards from the database.
+  Future<void> clearAllCards() async {
+    // removeAll returns the count of removed objects
+    int removedCount = await _cardBox.removeAll();
+    int removedReviewLogCount = await _reviewLogBox.removeAll();
+    print(
+      'Removed $removedCount cards  and $removedReviewLogCount review logs from the database.',
+    );
+    // Note: Depending on ObjectBox setup, related ReviewLogs might be removed
+    // automatically. If not, you might need to clear them explicitly:
+    // await _reviewLogBox.removeAll();
+  }
+
   // --- ReviewLog Operations (Example) ---
 
   // Add a review log to a card.

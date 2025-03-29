@@ -6,8 +6,23 @@ import 'dart:math';
 import 'package:acevocab/fsrs/fsrs_base.dart';
 
 class WordScheduler {
-  late final FSRSStorage _storage;
-  late final LocalSqliteHelper _localSqliteHelper;
+  // Singleton instance
+  static WordScheduler? _instance;
+
+  // Private constructor
+  WordScheduler._internal();
+
+  // Public factory method to get the instance
+  static Future<WordScheduler> getInstance() async {
+    if (_instance == null) {
+      _instance = WordScheduler._internal();
+      await _instance!._init(); // Call the private init method
+    }
+    return _instance!;
+  }
+
+  late FSRSStorage _storage; // Made non-final for init
+  late LocalSqliteHelper _localSqliteHelper; // Made non-final for init
   final PriorityQueue<Card> _queue = PriorityQueue<Card>(
     (a, b) => a.due.compareTo(b.due),
   );
@@ -15,7 +30,7 @@ class WordScheduler {
   double reviewToExploreRatio = 0.7;
   final FSRS _fsrs = FSRS();
 
-  Future<void> init() async {
+  Future<void> _init() async {
     _storage = await FSRSStorage.getInstance();
     _localSqliteHelper = LocalSqliteHelper.instance;
     _cards = await _storage.getAllCards();
@@ -41,6 +56,7 @@ class WordScheduler {
       newCard = info[rating]!.card;
       newReviewLog = info[rating]!.reviewLog;
       final newId = await _storage.createCard(newCard);
+      print(newReviewLog);
     } else {
       // Card found, update it.
 
@@ -50,7 +66,6 @@ class WordScheduler {
       Map<Rating, SchedulingInfo> info = _fsrs.repeat(card, now);
       newCard = info[rating]!.card;
       newReviewLog = info[rating]!.reviewLog;
-
       // Delete from ObjectBox and in-memory list
       await _storage.deleteCard(card.id!);
       _cards.removeWhere((c) => c.id == card!.id);
@@ -64,10 +79,13 @@ class WordScheduler {
       throw Exception('new card created is null');
     }
     storedCard.reviewLogs.add(newReviewLog);
+    print(storedCard);
     await _storage.updateCard(storedCard);
-    // newCard.reviewLogs.add(newReviewLog);
 
-    _cards.add(newCard);
+    // newCard.reviewLogs.add(newReviewLog);
+    //
+
+    _cards = await _storage.getAllCards();
     _sortQueue();
     print(_queue);
   }
@@ -79,6 +97,7 @@ class WordScheduler {
     if (dueCards.isEmpty) {
       // Explore (no cards to review)
       wordId = await _exploreWord();
+      print(wordId);
     } else {
       final random = Random();
       if (random.nextDouble() < reviewToExploreRatio) {
@@ -92,6 +111,15 @@ class WordScheduler {
 
     Question? question = await _localSqliteHelper.getQuestionData(wordId);
     return question;
+  }
+
+  /// Clears all card data from storage and internal memory.
+
+  Future<void> clearAllData() async {
+    await _storage.clearAllCards(); // Clear from database
+    _queue.clear(); // Clear in-memory queue
+    _cards.clear(); // Clear in-memory card list
+    print('All card data cleared from storage and scheduler memory.');
   }
 
   Future<int> _exploreWord() async {
