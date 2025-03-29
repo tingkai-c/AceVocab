@@ -31,7 +31,7 @@ jobs:
         run: |
           flutter clean
           flutter pub get
-          dart run flutter_launcher_icons
+          
         #   flutter analyze --fatal-infos
 
       - name: Install the CodeMagic CLI

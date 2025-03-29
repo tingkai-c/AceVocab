@@ -31,10 +31,11 @@ jobs:
 
         #4 Install Dependencies
       - name: Install Dependencies
-        run: flutter pub get
+        run: |
+          flutter clean
+          flutter pub get
 
-      - name: Update App Icon
-        run: dart run flutter_launcher_icon
+    
 
         #5 Setup Keystore
       - name: Decode Keystore
