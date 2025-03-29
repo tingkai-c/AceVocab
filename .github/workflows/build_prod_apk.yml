@@ -33,6 +33,9 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Update App Icon
+        run: dart run flutter_launcher_icon
+
         #5 Setup Keystore
       - name: Decode Keystore
         run: |
@@ -46,12 +49,12 @@ jobs:
           echo "storeFile=keystore.jks" >> android/key.properties
         
        #6 Building APK
-      - name: Build APK
-        run: flutter build apk --release
+      # - name: Build APK
+        #  run: flutter build apk --release
 
         #7 Building App Bundle (aab)
       - name: Build appBundle
-        run: flutter build appbundle
+        run: flutter build appbundle --release
         #9 Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4

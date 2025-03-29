@@ -50,12 +50,6 @@ flutter_launcher_icons:
   android: true # can specify file name here e.g. "ic_launcher"
   ios: true # can specify file name here e.g. "My-Launcher-Icon"
 
-
-  
-
-
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
