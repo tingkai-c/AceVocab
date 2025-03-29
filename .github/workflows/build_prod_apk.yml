@@ -50,8 +50,8 @@ jobs:
           echo "storeFile=keystore.jks" >> android/key.properties
         
        #6 Building APK
-      # - name: Build APK
-        #  run: flutter build apk --release
+      - name: Build APK
+        run: flutter build apk --release
 
         #7 Building App Bundle (aab)
       - name: Build appBundle
